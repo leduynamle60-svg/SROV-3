@@ -1,0 +1,106 @@
+--// Vietnam Military Barrack Full Rank System (Fixed Version)
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Xóa GUI cũ nếu có
+if LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("VMB_GUI") then
+    LocalPlayer.PlayerGui.VMB_GUI:Destroy()
+end
+
+-- Tạo GUI chính
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "VMB_GUI"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Frame chính (có thể kéo)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 250, 0, 300)
+mainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Tiêu đề
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = "🎖️ VMTD (CỤC QUÂN HUẤN)"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundColor3 = Color3.fromRGB(25,25,25)
+title.Font = Enum.Font.SourceSansBold
+title.TextScaled = true
+title.Parent = mainFrame
+
+-- Nút Rank
+local rankButton = Instance.new("TextButton")
+rankButton.Size = UDim2.new(1, 0, 0, 40)
+rankButton.Position = UDim2.new(0, 0, 0, 40)
+rankButton.Text = "Chọn Rank"
+rankButton.TextScaled = true
+rankButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+rankButton.TextColor3 = Color3.fromRGB(255,255,255)
+rankButton.Parent = mainFrame
+
+-- Rank Frame (ẩn mặc định, scrollable)
+local rankFrame = Instance.new("ScrollingFrame")
+rankFrame.Size = UDim2.new(1, 0, 0, 220)
+rankFrame.Position = UDim2.new(0, 0, 0, 80)
+rankFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+rankFrame.Visible = false
+rankFrame.CanvasSize = UDim2.new(0,0,0,1000) -- đủ để scroll
+rankFrame.ScrollBarThickness = 6
+rankFrame.Parent = mainFrame
+
+-- Danh sách rank
+local ranks = {
+    "[TSP1] Trial Staff Phase 1",
+    "[TSP2] Trial Staff Phase 2",
+    "[TSP3] Trial Staff Phase 3",
+    "[TSP4] Trial Staff Phase 4",
+    "[JDS] Junior Directing Staff",
+    "[DS] Directing Staff",
+    "[SDS] Senior Directing Staff",
+    "[HDS] Head Directing Staff",
+    "[LS] Leading Staff",
+    "[B.SGT] Brigade Sergeant",
+    "[B.SGM] Brigade Sergeant Major",
+    "[BSF] Brigade Staff",
+    "[BXS] Brigade Executive Staff",
+    "[BCS] Brigade Commanding Staff",
+    "[BXO] Brigade Executive Officer",
+    "[BCO] Brigade Commanding Officer",
+    "[ADV] Advisor",
+    "[XO] Executive Officer",
+    "[CO] Commanding Officer",
+    "[DCH] Deputy Chief",
+    "[CH] Chief",
+    "[Overseer] Overseer",
+    "[Holder] Holder"
+}
+
+-- Tạo nút cho từng rank
+for i, rank in ipairs(ranks) do
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -10, 0, 40)
+    btn.Position = UDim2.new(0, 5, 0, (i-1)*45)
+    btn.Text = rank
+    btn.TextScaled = true
+    btn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.Parent = rankFrame
+
+    -- Khi chọn rank → đổi tên hiển thị + reset player
+    btn.MouseButton1Click:Connect(function()
+        local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.DisplayName = rank .. " | " .. LocalPlayer.Name
+        end
+        LocalPlayer:LoadCharacter() -- reset ngay
+    end)
+end
+
+-- Toggle Rank menu
+rankButton.MouseButton1Click:Connect(function()
+    rankFrame.Visible = not rankFrame.Visible
+end)
